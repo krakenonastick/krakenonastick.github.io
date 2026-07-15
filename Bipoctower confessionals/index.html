@@ -10,11 +10,12 @@
       background: #f7f7f7;
       color: #333;
       margin: 0;
-      padding: 0;
+      padding: 2rem;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      box-sizing: border-box;
     }
 
     .container {
@@ -22,9 +23,16 @@
       padding: 2rem;
       border-radius: 12px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      max-width: 500px;
+      max-width: 1000px;
       width: 100%;
-      text-align: center;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .left-panel {
+      text-align: left;
     }
 
     h1 {
@@ -37,102 +45,40 @@
       margin-bottom: 1.5rem;
     }
 
-    input[type="file"] {
-      display: block;
-      margin: 0.75rem auto 1.5rem;
-    }
-
-    .button {
-      display: inline-block;
-      background: #0d6efd;
-      color: #fff;
-      padding: 0.9rem 1.6rem;
-      border: none;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .button:hover {
-      background: #0b5ed7;
-    }
-
     .help-link {
-      display: block;
+      display: inline-block;
       margin-top: 1rem;
       color: #0d6efd;
+    }
+
+    .embed-frame {
+      width: 100%;
+      max-width: 600px;
+      height: 290px;
+      border: 0;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 800px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      .left-panel {
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Hello World</h1>
-    <p>Upload an MP4 from your PC or phone to start your confessional video.</p>
+    <div class="left-panel">
+      <h1>Hello World</h1>
+      <p>Upload your confessional video through the embedded uploader on the right.</p>
+      <a class="help-link" href="advice.html">Advice for making good confessional videos</a>
+    </div>
 
-    <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
-      <label for="video-upload">Choose a video file</label>
-      <input id="video-upload" name="video" type="file" accept="video/mp4" />
-      <button id="upload-button" class="button" type="button">Upload</button>
-      <div id="upload-status" aria-live="polite" style="min-height: 1.4rem; margin-top: 1rem; visibility: hidden;"></div>
-    </form>
-
-    <a class="help-link" href="advice.html">Advice for making good confessional videos</a>
+    <iframe class="embed-frame" src="https://driveuploader.com/upload/rD9e4qKCDU/embed/"></iframe>
   </div>
-
-  <script>
-    const uploadButton = document.getElementById('upload-button');
-    const fileInput = document.getElementById('video-upload');
-    const statusEl = document.getElementById('upload-status');
-
-    function showStatus(message, isError = false) {
-      statusEl.textContent = message;
-      statusEl.style.color = isError ? '#d92f2f' : '#0d6efd';
-      statusEl.style.visibility = 'visible';
-    }
-
-    uploadButton.addEventListener('click', async () => {
-      if (!fileInput.files.length) {
-        showStatus('Please select an MP4 file to upload.', true);
-        return;
-      }
-
-      const file = fileInput.files[0];
-      if (!file.type.includes('mp4')) {
-        showStatus('Only MP4 files are accepted.', true);
-        return;
-      }
-
-     
-      const formData = new FormData();
-      formData.append('video', file);
-
-      uploadButton.disabled = true;
-      uploadButton.textContent = 'Uploading...';
-      showStatus('Uploading your file...', false);
-
-      try {
-        const response = await fetch('/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (response.ok) {
-          window.location.href = 'upload-success.html';
-          return;
-        }
-
-        window.location.href = 'upload-failure.html';
-      } catch (error) {
-        console.error('Upload failed:', error);
-        window.location.href = 'upload-failure.html';
-      } finally {
-        uploadButton.disabled = false;
-        uploadButton.textContent = 'Upload';
-      }
-    });
-  </script>
-   <iframe src="https://driveuploader.com/upload/rD9e4qKCDU/embed/" width="600px" height="290px" style="border:0;"></iframe>
-
 </body>
 </html>
